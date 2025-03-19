@@ -1,1 +1,1 @@
-![Uploading image.png…]()
+![Uploading leetcode-practice_gif.gif…]()
