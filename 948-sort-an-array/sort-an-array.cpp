@@ -1,49 +1,40 @@
 class Solution {
 public:
-    void merge(vector<int>& nums, int l, int m, int r) {
-        int n1 = m - l + 1;
-        int n2 = r - m; 
-        vector<int> left(n1);
-        vector<int> right(n2);
-        for(int i = 0; i < n1; i++) {
-            left[i] = nums[l + i];
+    const int xmin=-5*1e4;
+    vector<int> bucket[64];//64**3=262144>1e5+1
+    void radix_sort(vector<int>& nums) {
+        // 1st round
+        for (int& x : nums){// adjust x-=xmin
+            x-=xmin;
+            bucket[x&63].push_back(x);
         }
-        for(int i = 0; i < n2; i++) {
-            right[i] = nums[m + 1 + i];
+        int i = 0;
+        for (auto &B : bucket) {
+            for (auto v : B)
+                nums[i++] = v;
+            B.clear();
         }
-
-        int i = 0, j = 0, k = l;
-        while(i < n1 && j < n2) {
-            if(left[i] <= right[j]) {
-                nums[k++] = left[i++];
-            } else {
-                nums[k++] = right[j++];
-            }
+        // 2nd round
+        for (int& x : nums)
+            bucket[(x>>6)&63].push_back(x);
+        i=0;
+        for (auto &B : bucket) {
+            for (auto v : B)
+                nums[i++] = v;
+            B.clear();
         }
-
-        while(i < n1) {
-            nums[k++] = left[i++]; 
+        // 3rd round
+        for (int& x : nums)
+            bucket[x>>12].push_back(x);
+        i=0;
+        for (auto &B : bucket) {
+            for (auto v : B)//adjust back
+                nums[i++] = v+xmin;
+        //    B.clear();
         }
-
-        while(j < n2) {
-            nums[k++] = right[j++]; 
-        }
-    }
-    void mergeSort(vector<int>& nums, int l, int r) {
-        // base case
-        if(l >= r) return ;
-
-        int m = (l + r) >> 1;
-        mergeSort(nums, l, m);
-        mergeSort(nums, m + 1, r);
-        // merge the partitions
-        merge(nums, l, m, r);
     }
     vector<int> sortArray(vector<int>& nums) {
-        // Merge sort
-        // Time Complexity : O(n * logn)
-        // Space Complexity : O(n + logn), log n -> recursion stack
-        mergeSort(nums, 0, nums.size()-1);
+        radix_sort(nums);
         return nums;
     }
-};
+}; 
