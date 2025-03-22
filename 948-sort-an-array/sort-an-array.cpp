@@ -1,40 +1,29 @@
 class Solution {
 public:
-    const int xmin=-5*1e4;
-    vector<int> bucket[64];//64**3=262144>1e5+1
-    void radix_sort(vector<int>& nums) {
-        // 1st round
-        for (int& x : nums){// adjust x-=xmin
-            x-=xmin;
-            bucket[x&63].push_back(x);
+    void maxHeapify(vector<int>& nums, int n, int i) {
+        int lC = (2*i) + 1;
+        int rC = (2*i) + 2;
+        int largest = i;
+
+        if(lC < n && nums[lC] > nums[largest]) largest = lC;
+        if(rC < n && nums[rC] > nums[largest]) largest = rC;
+
+        if(largest != i) {
+            swap(nums[i], nums[largest]);
+            maxHeapify(nums, n, largest);
         }
-        int i = 0;
-        for (auto &B : bucket) {
-            for (auto v : B)
-                nums[i++] = v;
-            B.clear();
-        }
-        // 2nd round
-        for (int& x : nums)
-            bucket[(x>>6)&63].push_back(x);
-        i=0;
-        for (auto &B : bucket) {
-            for (auto v : B)
-                nums[i++] = v;
-            B.clear();
-        }
-        // 3rd round
-        for (int& x : nums)
-            bucket[x>>12].push_back(x);
-        i=0;
-        for (auto &B : bucket) {
-            for (auto v : B)//adjust back
-                nums[i++] = v+xmin;
-        //    B.clear();
+    }
+    void heapSort(vector<int>& nums, int n) {
+        for(int i = (n/2)-1; i >= 0; i--) 
+            maxHeapify(nums, n , i);
+
+        for(int i = n-1; i >= 0; i--) {
+            swap(nums[0], nums[i]);
+            maxHeapify(nums, i, 0);
         }
     }
     vector<int> sortArray(vector<int>& nums) {
-        radix_sort(nums);
+        heapSort(nums, nums.size());
         return nums;
     }
-}; 
+};
