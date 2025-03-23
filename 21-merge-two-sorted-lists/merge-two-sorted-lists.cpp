@@ -7,7 +7,7 @@ public:
         ListNode* dummy = new ListNode(0);
         ListNode* current = dummy;
 
-        while(list1 != nullptr && list2 != nullptr) {
+        while(list1 != NULL && list2 != NULL) {
             if(list1->val > list2->val) {
                 current->next = list2;
                 list2 = list2->next;
@@ -19,7 +19,7 @@ public:
             current = current->next;
         }
 
-        if(list1 != nullptr) {
+        if(list1 != NULL) {
             current->next = list1;
         } else {
             current->next = list2;
