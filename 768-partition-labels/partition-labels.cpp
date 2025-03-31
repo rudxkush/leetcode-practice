@@ -1,7 +1,6 @@
 class Solution {
 public:
     vector<int> partitionLabels(string s) {
-        int i = 0, j = 0;
         vector<int> res;
         vector<int> mp(26, 0); // hashMap
         for (int i = 0; i < s.length(); i++) {
@@ -12,8 +11,8 @@ public:
             end = max(end, mp[s[i] - 'a']);
 
             if (i == end) {
-                res.push_back(i - start + 1);
-                start = i + 1;
+                res.push_back(end - start + 1);
+                start = end + 1;
             }
         }
 
