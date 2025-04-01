@@ -1,33 +1,44 @@
 class Solution {
 public:
     bool canBeValid(string s, string locked) {
-        int n = s.size();
-        if(n % 2 == 1) return false; // odd length string
+        int n = s.length();
+        if(n % 2 == 1) return false; // for odd length strings
 
-        stack<int> unlocked, openBrackets;
-
+        int openBrackets = 0, unlocked = 0;
         for(int i = 0; i < n; i++) {
             if(locked[i] == '0') {
-                unlocked.push(i);
+                unlocked++;
             } else if(s[i] == '(') {
-                openBrackets.push(i);
+                openBrackets++;
             } else if(s[i] == ')') {
-                if(!openBrackets.empty()) {
-                    openBrackets.pop();
-                } else if(!unlocked.empty()) {
-                    unlocked.pop();
-                } else { return false; }
-            } 
-        } 
-
-        while(!openBrackets.empty() && !unlocked.empty() && 
-        openBrackets.top() < unlocked.top()) {
-            openBrackets.pop();
-            unlocked.pop();
+                if(openBrackets) {
+                    openBrackets--;
+                } else if(unlocked) {
+                    unlocked--;
+                } else {
+                    return false;
+                }
+            }
         }
 
-        if(openBrackets.empty()) return true;
-
-        return false;
+        int balance = 0;
+        for(int i = n-1; i >= 0; i--) {
+            if(locked[i] == '0') { 
+                unlocked--;
+                balance--;
+            } else if(s[i] == '(') {
+                balance++;
+                openBrackets--;
+            } else if(s[i] == ')') {
+                balance--;
+            } 
+            if(balance > 0) {
+                return false;
+            }
+        }
+        if(openBrackets > 0) {
+            return false;
+        }
+        return true;
     }
 };
