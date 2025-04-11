@@ -1,18 +1,25 @@
 class Solution {
 public:
-    void inverseInfixTraversal(TreeNode* root, int& nodeSum) {
-        if (!root) {
-            return;
-        }
-        inverseInfixTraversal(root->right, nodeSum);
-        nodeSum += root->val;
-        root->val = nodeSum;
-        inverseInfixTraversal(root->left, nodeSum);
-    }
     TreeNode* convertBST(TreeNode* root) {
         // reverse Infix Traversal
-        int nodeSum = 0;
-        inverseInfixTraversal(root, nodeSum);
+        stack<TreeNode*> st;
+        TreeNode* curr = root;
+        int sum = 0;
+        while (true) {
+            if (curr != NULL) {
+                st.push(curr);
+                curr = curr->right;
+            } else {
+                if (st.empty())
+                    break;
+                curr = st.top();
+                st.pop();
+                sum += curr->val;
+                curr->val = sum;
+
+                curr = curr->left;
+            }
+        }
         return root;
     }
 };
