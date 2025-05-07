@@ -25,7 +25,7 @@ public:
         if (ultimateParent_u == ultimateParent_v)
             return;
 
-        if (ultimateParent_u < ultimateParent_v) {
+        if (size[ultimateParent_u] < size[ultimateParent_v]) {
             parent[ultimateParent_u] = ultimateParent_v;
             size[ultimateParent_v] += size[ultimateParent_u];
         } else {
@@ -81,7 +81,6 @@ public:
                 result[indices[i]] = values[i];
             }
         }
-
         return result;
     }
 };
