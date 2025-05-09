@@ -1,26 +1,36 @@
 class Solution {
 public:
-    bool equalSum(vector<int>& nums, int i, int target, vector<vector<int>>& dp) {
+    vector<vector<int>> dp;
+    bool knapsack(vector<int>& nums, int i, int target) {
         // base case
-        if(target == 0) {
-            return true;
+        if(i < 0) {
+            if(target == 0) {
+                return true;
+            }
+            return false;
         }
-        if(i >= nums.size() || target < 0) return false;
+
         // if already computed!
         if(dp[i][target] != -1) return dp[i][target];
 
-        bool result = equalSum(nums, i+1, target - nums[i], dp) || equalSum(nums, i+1, target, dp);
-        return dp[i][target] = result;
+        bool left = 0;
+        if(nums[i] <= target) {
+            left = knapsack(nums, i - 1, target - nums[i]);
+        }
+
+        bool right = knapsack(nums, i - 1, target);
+
+        return dp[i][target] = left || right;
     }
     bool canPartition(vector<int>& nums) {
-        int totalSum = 0;
-        for(int i = 0; i < nums.size(); i++) {
-           totalSum += nums[i];
+        int n = nums.size();
+        int sum = 0;
+        for(int num : nums) {
+            sum += num;
         }
-        if (totalSum % 2 != 0) return false;
-        int target = totalSum / 2; 
-
-        vector<vector<int>> dp(nums.size(), vector<int>(target+1, -1));
-        return equalSum(nums, 0, target, dp);
+        if(sum % 2 == 1) return false;
+        int target = sum / 2;
+        dp.assign(n, vector<int> (target + 1, -1));
+        return knapsack(nums, n - 1, target);
     }
 };
