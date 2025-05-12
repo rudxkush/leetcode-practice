@@ -20,7 +20,7 @@ public:
 
     int coinChange(vector<int>& coins, int amount) {
         int n = coins.size();
-        dp.assign(n, vector<int>(amount + 1, -1)); // properly initialize with -1
+        dp.assign(n, vector<int>(amount + 1, -1));
         int answer = unboundedKnapsack(coins, n - 1, amount);
         return answer == INT_MAX ? -1 : answer;
     }
