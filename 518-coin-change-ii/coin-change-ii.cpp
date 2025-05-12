@@ -1,7 +1,7 @@
 class Solution {
 public:
     vector<vector<int>> dp;
-    int knapsack(vector<int>& arr, int target, int i) {
+    int unboundedKnapsack(vector<int>& arr, int target, int i) {
         // base case
         if (i < 0) {
             if (target == 0) {
@@ -20,16 +20,16 @@ public:
         // choice : include
         int include = 0;
         if (arr[i] <= target) {
-            include = knapsack(arr, target - arr[i], i);
+            include = unboundedKnapsack(arr, target - arr[i], i);
         }
         // choice : exclude
-        int exclude = knapsack(arr, target, i - 1);
+        int exclude = unboundedKnapsack(arr, target, i - 1);
 
         return dp[i][target] = (include + exclude);
     }
     int change(int target, vector<int>& arr) {
         int n = arr.size();
         dp.assign(n, vector<int>(target + 1, -1));
-        return knapsack(arr, target, n - 1);
+        return unboundedKnapsack(arr, target, n - 1);
     }
 };
