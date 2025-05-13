@@ -1,20 +1,24 @@
 class Solution {
 public:
-    int dfs(TreeNode* node, int& maxSum) {
-        if (!node)
-            return 0;
+    int maxPathSumHelper(TreeNode* root, int& res) {
+        // base case
+        if(root == nullptr) return 0;
 
-        int leftSum = max(0, dfs(node->left, maxSum));
-        int rightSum = max(0, dfs(node->right, maxSum));
+        // hypothesis
+        int left = maxPathSumHelper(root->left, res);
+        int right = maxPathSumHelper(root->right, res);
 
-        maxSum = max(maxSum, leftSum + rightSum + node->val);
-        
-        return max(leftSum, rightSum) + node->val;
+        // induction
+        int temp = max(root->val + max(left, right), root->val);
+        int ans = max(temp, root->val + left + right);
+
+        res = max(res, ans);
+
+        return temp;
     }
-
     int maxPathSum(TreeNode* root) {
-        int maxSum = root->val;
-        dfs(root, maxSum);
-        return maxSum;
+        int res = INT_MIN;
+        maxPathSumHelper(root, res);
+        return res;
     }
 };
