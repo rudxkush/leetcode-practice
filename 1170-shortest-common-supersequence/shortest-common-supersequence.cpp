@@ -1,49 +1,53 @@
 class Solution {
 public:
-    // A sequence where the order of elements is maintained,
-    // but the elements do not need to be continuous.
-    string shortestCommonSupersequenceHelper(int n, int m, string& s1, string& s2) {
+    string shortestCommonSupersequenceHelper(string& s1, string& s2) {
+        int n = s1.length();
+        int m = s2.length();
         vector<vector<int>> lcs(n + 1, vector<int>(m + 1, 0));
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= m; j++) {
                 if (s1[i - 1] == s2[j - 1]) {
-                    lcs[i][j] = lcs[i - 1][j - 1] + 1;
+                    lcs[i][j] = 1 + lcs[i - 1][j - 1];
                 } else {
-                    lcs[i][j] = max(lcs[i][j - 1], lcs[i - 1][j]);
+                    lcs[i][j] = max(lcs[i - 1][j], lcs[i][j - 1]);
                 }
             }
         }
+
         int i = n, j = m;
-        string str = "";
-        while (i > 0 && j > 0) {
-            if (s1[i - 1] == s2[j - 1]) {
-                str += s1[i - 1];
+        string ans = "";
+        while(i > 0 && j > 0) {
+            if(s1[i - 1] == s2[j - 1]) {
+                ans += s1[i - 1];
                 i--, j--;
-            } else if (lcs[i - 1][j] > lcs[i][j - 1]) {
-                str += s1[i - 1];
+            } else if(lcs[i - 1][j] > lcs[i][j - 1]) {
+                ans += s1[i - 1];
                 i--;
             } else {
-                str += s2[j - 1];
+                ans += s2[j - 1];
                 j--;
             }
         }
-
-        while (i > 0) {
-            str += s1[i - 1];
+        while(i > 0) {
+            ans += s1[i - 1];
             i--;
         }
-
-        while (j > 0) {
-            str += s2[j - 1];
+        while(j > 0) {
+            ans += s2[j - 1];
             j--;
         }
-
-        reverse(str.begin(), str.end());
-        return str;
+        reverse(ans.begin(), ans.end());
+        return ans;
     }
+
     string shortestCommonSupersequence(string str1, string str2) {
-        int l = str1.length();
-        int m = str2.length();
-        return shortestCommonSupersequenceHelper(l, m, str1, str2);
+        // abac
+        // cab
+        // lcs -> ab
+        // cabac
+        // abaccab -> 2 lcs here
+        // we shall try to reomve 1 lcs from it in order to get the shortest
+        // string that has both str1 and str2 as subsequence
+        return shortestCommonSupersequenceHelper(str1, str2);
     }
 };
