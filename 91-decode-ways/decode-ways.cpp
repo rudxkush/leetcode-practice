@@ -7,8 +7,9 @@ public:
         if (s[i] == '0') return 0;
         if (dp[i] != -1) return dp[i];
 
+        int count = 0;
         // k = 1
-        int count = numDecodingsHelper(s, i + 1);
+        count += numDecodingsHelper(s, i + 1);
 
         // k = 2
         if (i + 1 < s.size()) {
