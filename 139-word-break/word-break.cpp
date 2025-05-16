@@ -1,81 +1,54 @@
-class Node {
+class TrieNode{
 public:
-    // Every index corresponding to the lower case letter
-    // has a reference ptr to another node
-    Node* links[26];
+    TrieNode* links[26];
     bool flag = false;
-    bool containKeys(char ch) { return (links[ch - 'a'] != NULL); }
-    // putting ptr to node char list to another newly created node
-    void put(char ch, Node* node) { links[ch - 'a'] = node; }
-    Node* get(char ch) { return links[ch - 'a']; }
-    void setEnd() { flag = true; }
-    bool isEnd() { return flag; }
-};
-class Trie {
-private:
-    Node* root;
 
+    bool containKeys(char ch) { return links[ch - 'a'] != nullptr; };
+    void put(char ch, TrieNode* node) { links[ch - 'a'] = node; };
+    TrieNode* getKey(char ch) { return links[ch - 'a']; };
+    void setEnd() { flag = true; };
+    bool isEnd() { return flag; };
+};
+
+class TrieTree{
+private:
+    TrieNode* root;
 public:
-    Trie() { root = new Node(); }
+    TrieTree(){ root = new TrieNode(); };
     void insert(string word) {
-        Node* node = root;
-        for (int i = 0; i < word.length(); i++) {
-            if (!node->containKeys(word[i])) {
-                node->put(word[i], new Node());
+        TrieNode* node = root;
+        for(int i = 0; i < word.length(); i++) {
+            if(!node->containKeys(word[i])) {
+                node->put(word[i], new TrieNode());
             }
-            // move to the reference trie
-            node = node->get(word[i]);
+            node = node->getKey(word[i]);
         }
         node->setEnd();
     }
-    bool search(string word) {
-        Node* node = root;
-        for (int i = 0; i < word.length(); i++) {
-            if (!node->containKeys(word[i])) {
-                return false;
-            }
-            node = node->get(word[i]);
-        }
-        return node->isEnd();
-    }
-    Node* getRoot() { return root; }
-    bool checkWordFromIndex(const string& s, int start, vector<int>& dp) {
-        Node* node = root;
-        for (int i = start; i < s.size(); ++i) {
-            if (!node->containKeys(s[i]))
-                return false;
-            node = node->get(s[i]);
-            if (node->isEnd() && dp[i + 1])
-                return true;
-        }
-        return false;
-    }
+    TrieNode* getRoot() { return root; };
 };
-
 class Solution {
 public:
     bool wordBreak(string s, vector<string>& wordDict) {
-        Trie trie;
-        for (string& word : wordDict) {
-            trie.insert(word);
-        }
+        TrieTree trie;
+        for(auto word : wordDict) trie.insert(word);
+        int n = s.length();
+        vector<bool> validPart(n + 1, false); 
+        validPart[n] = true;
 
-        int n = s.size();
-        vector<int> dp(n + 1, 0);
-        dp[n] = 1; 
-
-        for (int i = n - 1; i >= 0; i--) {
-            Node* node = trie.getRoot(); 
-            for (int j = i; j < n; ++j) {
-                if (!node->containKeys(s[j]))
+        for(int i = n - 1; i >= 0; i--) {
+            TrieNode* node = trie.getRoot();
+            for(int j = i; j < n; j++) {
+                if(!node->containKeys(s[j])) {
                     break;
-                node = node->get(s[j]);
-                if (node->isEnd() && dp[j + 1]) {
-                    dp[i] = 1;
+                }
+                node = node->getKey(s[j]);
+                if(node->isEnd() && validPart[j + 1]) {
+                    validPart[i] = true;
                     break;
                 }
             }
         }
-        return dp[0];
+        return validPart[0];
     }
 };
