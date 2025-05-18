@@ -12,13 +12,13 @@ public:
                  return a[0] < b[0];
              });
         vector<int> dp;
-        for (auto& env : envelopes) {
-            int h = env[1];
-            auto it = lower_bound(dp.begin(), dp.end(), h);
-            if (it == dp.end()) {
-                dp.push_back(h);
+        for (auto env : envelopes) {
+            int currEle = env[1];
+            if (dp.empty() || currEle > dp.back()) {
+                dp.push_back(currEle); 
             } else {
-                *it = h;
+                auto it = lower_bound(dp.begin(), dp.end(), currEle);
+                *it = currEle;
             }
         }
         return dp.size();
