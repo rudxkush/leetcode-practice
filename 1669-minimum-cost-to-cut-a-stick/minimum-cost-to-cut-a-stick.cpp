@@ -11,14 +11,14 @@ public:
 
         for (int i = c; i >= 1; i--) {
             for (int j = i; j <= c; j++) {
-                int mini = INT_MAX;
+                int mini = 1e9;
 
-                for (int ind = i; ind <= j; ind++) {
-                    int cost = cuts[j + 1] - cuts[i - 1] + dp[i][ind - 1] +
-                               dp[ind + 1][j];
-                    mini = min(mini, cost);
+                for(int k = i; k <= j; k++) {
+                    int cost = cuts[j + 1] - cuts[i - 1] +
+                               dp[i][k - 1] + dp[k + 1][j];
+                    
+                    mini = min(cost, mini);
                 }
-
                 dp[i][j] = mini;
             }
         }
