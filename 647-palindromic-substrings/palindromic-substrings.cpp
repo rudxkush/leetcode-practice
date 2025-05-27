@@ -1,32 +1,43 @@
 class Solution {
 public:
-    bool isPalindrome(string& s) {
-        int i = 0, j = s.length() - 1;
-        while (i < j) if (s[i++] != s[j--]) return false;
+    int n = 0;
+    int cnt = 0;
+    bool isPalindrome(string& ans) {
+        int i = 0, j = ans.length() - 1;
+        while(i < j) if(ans[i++] != ans[j--]) return false;
         return true;
     }
-
-    void fn(string& s, int start, string& current, int& count) {
-        // At each step, check if current substring is a palindrome
-        if (!current.empty() && isPalindrome(current)) {
-            count++;
+    void countHelper(string& s, int i, string& ans) {
+        // base case
+        if(!ans.empty() && isPalindrome(ans)) {
+            cnt++;
         }
 
-        // Try to extend the substring to the right
-        for (int i = start; i < s.length(); ++i) {
-            current.push_back(s[i]);
-            fn(s, i + 1, current, count); // move start forward
-            current.pop_back(); // backtrack
-            break; // Ensure only contiguous characters (i.e., break after extending once)
+        for(int choices = i; choices < n; choices++) {
+            // choose
+            ans.push_back(s[choices]);
+            // move forward
+            countHelper(s, i + 1, ans);
+            // backtrack
+            ans.pop_back();
+            break; 
         }
     }
-
     int countSubstrings(string s) {
-        int count = 0;
-        string current = "";
-        for (int i = 0; i < s.length(); ++i) {
-            fn(s, i, current, count);
-        }
-        return count;
+        n = s.length();
+        string ans = "";
+        for(int i = 0; i < n; i++) countHelper(s, i, ans);
+        return cnt;
     }
 };
+
+/*
+  a b c
+  a
+  a b -> Not a palindrome
+  a b c -> Not a palindrome
+  b 
+  b c -> Not a palindrome
+  c
+  Output => "a", "b", "b" = (?count) 3
+*/
