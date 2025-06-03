@@ -1,15 +1,22 @@
 class Solution {
 public:
-    vector<int> longestObstacleCourseAtEachPosition(vector<int>& nums) {
-        int n = nums.size();
-        vector<int> temp(n + 1, 1e9), ans;
-
-        for(int i = 0; i < n; i++) {
-            int index = upper_bound(temp.begin(), temp.end(), nums[i]) - temp.begin();
-            temp[index] = nums[i];
-            ans.push_back(index + 1);
+    vector<int> longestObstacleCourseAtEachPosition(vector<int>& obstacles) {
+        vector<int> courses; // the longest course
+        for(int& height : obstacles) {
+            if(courses.empty() || courses.back() <= height) {
+                // if the course is empty or the current obstacle is higher than the last obstacle in the course, append it to the longest course
+                courses.push_back(height);
+                height = courses.size();
+            } else {
+                // find the first obstacle's height that is higher than current obstacle and replace it with the current height
+                // the longest course will remain valid as we maintain the maximum height of "each course" to the lowest value
+                // [1, 2, 3] ==>> [1, 2, 2] after replacing the "3" with "2"
+                auto it = upper_bound(courses.begin(), courses.end(), height);
+                *it = height;
+                height = distance(courses.begin(), it) + 1;
+            }
         }
-        return ans;
+        return obstacles;
     }
 };
 /*
