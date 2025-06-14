@@ -2,11 +2,10 @@ class Solution {
 public:
     int maxTime = INT_MIN;
     void dfs(unordered_map<int, vector<int>>& tree, vector<int>& informTime, int headID, int currTime) {
-        maxTime = max(currTime, maxTime);
-
         for(int adj : tree[headID]) {
             dfs(tree, informTime, adj, currTime + informTime[headID]);
         }
+        maxTime = max(currTime, maxTime);
     }
     int numOfMinutes(int n, int headID, vector<int>& manager, vector<int>& informTime) {
         unordered_map<int, vector<int>> tree;
