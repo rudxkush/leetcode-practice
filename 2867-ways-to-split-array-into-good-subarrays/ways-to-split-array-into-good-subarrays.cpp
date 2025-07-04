@@ -18,6 +18,6 @@ public:
             int zeroesBetween = (right - left - 1)%MOD;
             result = (result * (zeroesBetween + 1)) % MOD;
         }
-        return static_cast<int>(result);
+        return (int)result;
     }
 };
