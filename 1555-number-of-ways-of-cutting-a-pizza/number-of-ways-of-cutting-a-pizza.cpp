@@ -17,8 +17,9 @@ public:
         return;
     }
     int getSlices(vector<string>& pizza, int r, int c, int k) {
+        // base case
         if (prefixSum[r][c] == 0) return 0;
-        if(k == 1) return 1;
+        if(k == 1) return 1; // as already checked that the prefixSum is greater then zero so that means even this one is also valid is the k == 1.
         if(dp[r][c][k] != -1) return dp[r][c][k];
 
         int ways = 0;
