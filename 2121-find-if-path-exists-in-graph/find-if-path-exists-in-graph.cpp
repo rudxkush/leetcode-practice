@@ -1,30 +1,32 @@
 class Solution {
 public:
-    bool pathFinder(int n, vector<vector<int>>& graph, int source,
-                    int destination, vector<bool>& visited) {
-        if (source == destination)
-            return true;
+    int src, dest;
 
-        if (visited[source])
-            return false;
+    bool dfs(vector<vector<int>>& graph, int node, vector<bool>& visited) {
+        if (node == dest) return true; // Found destination
+        visited[node] = true;
 
-        visited[source] = true;
-        for (int neighbour : graph[source]) {
-            if (pathFinder(n, graph, neighbour, destination, visited))
-                return true;
+        for (auto neighbour : graph[node]) {
+            if (!visited[neighbour]) {
+                if (dfs(graph, neighbour, visited)) 
+                    return true;
+            }
         }
-
         return false;
     }
-    bool validPath(int n, vector<vector<int>>& edges, int source,
-                   int destination) {
-        vector<vector<int>> graph(n);    
-        for(auto& edge : edges) {
-            int a = edge[0], b = edge[1];
-            graph[a].push_back(b);  
-            graph[b].push_back(a); 
+
+    bool validPath(int n, vector<vector<int>>& edges, int source, int destination) {
+        vector<vector<int>> graph(n);
+        src = source;
+        dest = destination;
+
+        // Build adjacency list
+        for (auto& edge : edges) {
+            graph[edge[0]].push_back(edge[1]);
+            graph[edge[1]].push_back(edge[0]);
         }
+
         vector<bool> visited(n, false);
-        return pathFinder(n, graph, source, destination, visited);
+        return dfs(graph, src, visited);
     }
 };
