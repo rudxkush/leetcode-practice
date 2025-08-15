@@ -1,32 +1,31 @@
 class Solution {
 public:
     int minMutation(string startGene, string endGene, vector<string>& bank) {
-        // insert all the string in set for O(1) locating the valid Gene.
-        unordered_set<string> geneSet;
-        for(auto& gene : bank) 
-            geneSet.insert(gene);
-        
-        unordered_set<string> visitedSet;
-        // perform BFS from startGene and try to reach the endGene
-        // note that the first reach is always gonna be sorted in the BFS.
-        queue<pair<string, int>> q; // gene, hops
-        q.push({startGene,0});
+        unordered_set<string> geneSet(bank.begin(), bank.end());
+        if(!geneSet.count(endGene)) return -1;
+
+        queue<pair<string, int>> q; // {gene, steps}
+        q.push({startGene, 0});
+
         vector<char> choices = {'A', 'C', 'G', 'T'};
+        unordered_set<string> visited;
+        visited.insert(startGene);
+
         while(!q.empty()) {
-            string gene = q.front().first;
-            int steps = q.front().second;
-            q.pop();
+            auto [gene, steps] = q.front(); q.pop();
             if(gene == endGene) return steps;
-            for(int i = 0; i < gene.length(); ++i) {
-                for(auto& ch : choices ) {
-                    string original = gene;
-                    gene[i] = ch;
-                    if(geneSet.find(gene) != geneSet.end() && visitedSet.find(gene) == visitedSet.end()) {
-                        visitedSet.insert(gene);
+
+            for(int i = 0; i < gene.size(); ++i) {
+                char original = gene[i];
+                for(char c : choices) {
+                    if(c == original) continue;
+                    gene[i] = c;
+                    if(geneSet.count(gene) && !visited.count(gene)) {
+                        visited.insert(gene);
                         q.push({gene, steps + 1});
                     }
-                    gene = original;
                 }
+                gene[i] = original;
             }
         }
         return -1;
