@@ -1,34 +1,32 @@
 class Solution {
 public:
-    pair<int, int> getCoordinates(int num, int n) {
-        int r = n - 1 - (num - 1) / n;
-        int c = (num - 1) % n;
-        if (((n - 1 - r) % 2) == 1) c = n - 1 - c; // flip column for odd row from bottom
+    int n = 0;
+    pair<int,int> getCoordinate(int s) {
+        int r = n - 1 - s / n; // bottom row = n-1
+        int c = s % n;
+        if ((n - 1 - r) % 2 == 1) c = n - 1 - c; // odd row from bottom → right to left
         return {r, c};
     }
     int snakesAndLadders(vector<vector<int>>& board) {
-        int n = board.size();
-        vector<bool> visited(n * n + 1, false);
-        queue<pair<int, int>> q; // {cell number, number of moves}
-        q.push({1, 0});
-        visited[1] = true;
+        n = board.size(); 
+        vector<bool> visited(n*n, false);
 
-        while (!q.empty()) {
-            auto [curr, moves] = q.front();
-            q.pop();
+        queue<pair<int, int>> q; // cell, steps;
+        q.push({0, 0});
+        visited[0] = true;
+        while(!q.empty()) {
+            auto [cell, steps] = q.front(); q.pop();
+            if(cell == (n*n) - 1) return steps;
 
-            if (curr == n * n) return moves;
+            for(int i = 1; i <= 6; i++) {
+                int next = cell + i;
+                if(next >= n*n) continue;
 
-            for (int dice = 1; dice <= 6; ++dice) {
-                int next = curr + dice;
-                if (next > n * n) continue;
-
-                auto [r, c] = getCoordinates(next, n);
-                if (board[r][c] != -1) next = board[r][c];
-
-                if (!visited[next]) {
+                auto [row, col] = getCoordinate(next);
+                if(board[row][col] != -1) next = board[row][col] - 1;
+                if(!visited[next]) {
+                    q.push({next, steps + 1});
                     visited[next] = true;
-                    q.push({next, moves + 1});
                 }
             }
         }
