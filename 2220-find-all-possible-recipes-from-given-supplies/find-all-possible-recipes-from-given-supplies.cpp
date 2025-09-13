@@ -4,32 +4,38 @@ public:
                                          vector<vector<string>>& ingredients,
                                          vector<string>& supplies) {
         int n = recipes.size();
-        unordered_set<string> sup(supplies.begin(), supplies.end());
+        unordered_set<string> s(supplies.begin(), supplies.end());
+        unordered_map<string, vector<int>>
+            graph; // the idea is here to look in the recipe to determine whose
+                   // inDegree we are going to manipulate.
         vector<int> inDegree(n, 0);
-        unordered_map<string, vector<int>> adj;
-
         for (int i = 0; i < n; i++) {
-            for (const string& s : ingredients[i]) {
-                if (!sup.count(s)) {
-                    adj[s].push_back(i);
+            for (auto ingre : ingredients[i]) {
+                if (!s.count(ingre)) {
+                    graph[ingre].push_back(i);
                     inDegree[i]++;
                 }
             }
         }
 
-        int readyRecipes[101], front = 0, back = 0;
+        queue<int> q;
         vector<string> ans;
-        for (int i = 0; i < n; i++)
-            if (inDegree[i] == 0)
-                readyRecipes[back++] = i;
+        for (int i = 0; i < n; i++) {
+            if (inDegree[i] == 0) {
+                q.push(i);
+            }
+        }
 
-        while (front != back) {
-            int i = readyRecipes[front++];
-            auto s = recipes[i];
-            ans.push_back(s);
-            for (auto j : adj[s]) {
-                if (--inDegree[j] == 0)
-                    readyRecipes[back++] = j;
+        while (!q.empty()) {
+            int j = q.front();
+            q.pop();
+            ans.push_back(recipes[j]);
+
+            for (auto nei : graph[recipes[j]]) {
+                inDegree[nei]--;
+                if (inDegree[nei] == 0) {
+                    q.push(nei);
+                }
             }
         }
         return ans;
