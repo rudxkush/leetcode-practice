@@ -1,34 +1,37 @@
 class Solution {
 public:
     int res = 1;
-    int dfs(vector<vector<int>>& graph, int currNode, int parentNode,
-            string& s) {
-        int longest1 = 0, longest2 = 0;
+    int dfs(vector<vector<int>>& graph, int node, int parent, string& s) {
+        int longest = 0, secondLongest = 0;
 
-        for (auto nei : graph[currNode]) {
-            if (nei == parentNode)
-                continue;
+        for(auto nei : graph[node]) {
+            if(nei == parent) continue;
+            int len = dfs(graph, nei, node, s);
 
-            int childLen = dfs(graph, nei, currNode, s);
+            if (s[nei] == s[node]) continue;
+        
+            // maintain longest and secondLongest
+            if (len > secondLongest) {
+                secondLongest = len;
+            }
 
-            if (s[nei] != s[currNode]) {
-                if (childLen > longest1) {
-                    longest2 = longest1;
-                    longest1 = childLen;
-                } else if (childLen > longest2) {
-                    longest2 = childLen;
-                }
+            if (secondLongest > longest) {
+                swap(longest, secondLongest);
             }
         }
 
-        res = max(res, 1 + longest1 + longest2);
-        return 1 + longest1;
+        int temp = 1 + longest + secondLongest;
+
+        int ans = 1 + longest;
+
+        res = max({res, temp, ans});
+
+        return ans;
     }
 
     int longestPath(vector<int>& parent, string s) {
         int n = s.size();
         vector<vector<int>> graph(n);
-
         for (int i = 0; i < n; i++) {
             if (parent[i] != -1) {
                 graph[parent[i]].push_back(i);
@@ -40,3 +43,4 @@ public:
         return res;
     }
 };
+
