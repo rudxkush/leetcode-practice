@@ -1,26 +1,46 @@
+#define tn TreeNode* 
+#define inf (1<<20)
+
+
+map<pair<tn, pair<bool, bool>>, int> dp; 
+
 class Solution {
-public:
-    void dfs(TreeNode* node, int& ans) {
-        if (!node || (!node->left && !node->right))
-            return;
-
-        dfs(node->left, ans);
-        dfs(node->right, ans);
-
-        if ((node->left && node->left->val == 0) ||
-            (node->right && node->right->val == 0)) {
-            node->val = 1;
-            ans++;
-        } else if (node->left && node->left->val == 1 ||
-                   node->right && node->right->val == 1) {
-            node->val = 2;
+    int solve(tn root, bool cam, bool parCam){
+        if(root == NULL){
+            if(cam)return inf;
+            else return 0;
+        }
+        if(root->left == NULL && root->right == NULL){
+            if(cam)
+                return 1;
+            else{
+                if(parCam)
+                    return 0;
+                else return inf;
+            }
+        }
+        
+        if(dp.find({root, {cam, parCam}}) != dp.end())
+            return dp[{root, {cam, parCam}}];
+        if(cam){
+            return dp[{root, {cam, parCam}}] = 1 + min(solve(root->left, 0, 1), solve(root->left, 1, 1)) +
+                        min(solve(root->right, 0, 1), solve(root->right, 1, 1));
+        }
+        else{
+            if(parCam){
+                return dp[{root, {cam, parCam}}] = min(solve(root->left, 0, 0), solve(root->left, 1, 0)) +
+                        min(solve(root->right, 0, 0), solve(root->right, 1, 0));
+            }
+            else{
+                int op1 = solve(root->left, 1, 0) + min(solve(root->right, 0, 0), solve(root->right, 1, 0));
+                int op2 = solve(root->right, 1, 0) + min(solve(root->left, 0, 0), solve(root->left, 1, 0));
+                return dp[{root, {cam, parCam}}] = min(op1, op2);
+            }
         }
     }
-
+public:
     int minCameraCover(TreeNode* root) {
-        int ans = 0;
-        dfs(root, ans);
-        ans += root->val == 0;
-        return ans;
+        dp.clear();
+        return min(solve(root, 0, 0), solve(root, 1, 0));
     }
 };
