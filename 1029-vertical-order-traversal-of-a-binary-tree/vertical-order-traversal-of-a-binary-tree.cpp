@@ -1,27 +1,35 @@
 class Solution {
 public:
-    void inOrder(TreeNode* root, int x, int level,
-                 map<int, map<int, multiset<int>>>& map) {
-        if (root == NULL)
-            return;
-        inOrder(root->left, x - 1, level + 1, map);
-        map[x][level].insert(root->val);
-        inOrder(root->right, x + 1, level + 1, map);
-    }
-
     vector<vector<int>> verticalTraversal(TreeNode* root) {
-        if (root == NULL)
-            return {};
-        map<int, map<int, multiset<int>>> map;
-        inOrder(root, 0, 0, map);
+        map<int, map<int, multiset<int>>> nodes; 
+        queue<pair<TreeNode*, pair<int, int>>> q;
+        vector<vector<int>> res;
 
-        vector<vector<int>> ans;
-        for (auto it : map) {
-            vector<int> col;
-            for (auto p : it.second)
-                col.insert(col.end(), p.second.begin(), p.second.end());
-            ans.push_back(col);
+        if (!root) return res;
+
+        q.push({root, {0, 0}});
+
+        while (!q.empty()) {
+            auto [node, pos] = q.front();
+            q.pop();
+            int col = pos.first, row = pos.second;
+
+            nodes[col][row].insert(node->val);
+
+            if (node->left)
+                q.push({node->left, {col - 1, row + 1}});
+            if (node->right)
+                q.push({node->right, {col + 1, row + 1}});
         }
-        return ans;
+
+        for (auto &p : nodes) {
+            vector<int> colVals;
+            for (auto &r : p.second) {
+                colVals.insert(colVals.end(), r.second.begin(), r.second.end());
+            }
+            res.push_back(colVals);
+        }
+
+        return res;
     }
 };
