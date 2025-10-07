@@ -1,28 +1,31 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 class Solution {
 public:
-    int diameterOfBinaryTreeHelper(TreeNode* root, int& res) {
-        // base case
-        if(root == nullptr) return 0;
+    int rec(TreeNode* root, int& res) {
+        if(root == NULL)
+            return 0;
 
-        // hypothesis
-        int left = diameterOfBinaryTreeHelper(root->left, res);
-        int right = diameterOfBinaryTreeHelper(root->right, res);
+        int left = rec(root->left, res);
+        int right = rec(root->right, res);
 
-        // induction
-        int temp = max(left, right) + 1; 
-        // left or right which is the longest + 1 (currNode as a part of either left or right)
-
-        int ans = max(temp, left + right + 1); // w/o or w the root, choose the maximum answer
-
-        res = max(res, ans);
-
+        int temp = 1 + max(left, right);
+        int ans = 1 + left + right;
+        res = max({res, temp, ans});
         return temp;
     }
     int diameterOfBinaryTree(TreeNode* root) {
-        if(!root)
-            return 0;
-        int res = 0;
-        int NodeCnt = diameterOfBinaryTreeHelper(root, res); 
-        return res - 1;  // as they have asked the number of edges
+        int res = 1;
+        rec(root, res);
+        return res - 1;
     }
 };
