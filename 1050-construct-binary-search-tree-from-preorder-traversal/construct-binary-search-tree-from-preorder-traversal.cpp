@@ -1,26 +1,46 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left),
+ * right(right) {}
+ * };
+ */
 class Solution {
 public:
-    TreeNode* bstFromPreorderHelper(vector<int>& preorder, int start, int end) {
+    TreeNode* recBuild(vector<int>& preorder, int start, int end) {
         if (start > end)
             return NULL;
 
         TreeNode* root = new TreeNode(preorder[start]);
-
-        int i;
-        for (i = start + 1; i <= end; i++) {
-            if (preorder[i] > root->val) {
-                break;
+        int counter = start;
+        for (int i = start + 1; i <= end; i++) {
+            if (preorder[i] < root->val) {
+                counter++;
             }
         }
 
-        root->left = bstFromPreorderHelper(preorder, start + 1, i - 1);
-        root->right = bstFromPreorderHelper(preorder, i, end);
+        root->left = recBuild(preorder, start + 1, counter);
+
+        root->right = recBuild(preorder, counter + 1, end);
 
         return root;
     }
     TreeNode* bstFromPreorder(vector<int>& preorder) {
-        int start = 0;
-        int end = preorder.size() - 1;
-        return bstFromPreorderHelper(preorder, start, end);
+        /*
+            Input: preorder = [8,5,1,7,10,12]
+            Output: [8,5,10,1,7,null,12]
+
+                          8, preorder[0]
+                        /               \
+            all member <  8              all members >  8
+        */
+        int n = preorder.size();
+        TreeNode* temp = recBuild(preorder, 0, n - 1);
+        return temp != NULL ? temp : NULL;
     }
 };
