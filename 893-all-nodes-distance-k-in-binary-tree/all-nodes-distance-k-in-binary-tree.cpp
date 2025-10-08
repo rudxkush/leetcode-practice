@@ -1,43 +1,54 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
-    unordered_map<TreeNode*, TreeNode*> storeParents;
-
-    void dfsTraversal(TreeNode* root, TreeNode* parent) {
-        if (root == nullptr)
+    void mapChildren_s_Parent(TreeNode* root,
+                              unordered_map<TreeNode*, TreeNode*>& mp) {
+        if (root == NULL)
             return;
-        storeParents[root] = parent;
-        dfsTraversal(root->left, root);
-        dfsTraversal(root->right, root);
+
+        if (root->left)
+            mp[root->left] = root;
+        if (root->right)
+            mp[root->right] = root;
+
+        mapChildren_s_Parent(root->left, mp);
+        mapChildren_s_Parent(root->right, mp);
     }
-
     vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
-        dfsTraversal(root, nullptr);
-
-        queue<pair<TreeNode*, int>> q;
-        unordered_set<TreeNode*> visited;
+        unordered_map<TreeNode*, TreeNode*> mp;
+        mp[root] = NULL;
+        mapChildren_s_Parent(root, mp);
         vector<int> res;
-
+        queue<pair<TreeNode*, int>> q;
         q.push({target, 0});
-        visited.insert(target);
+        unordered_set<TreeNode*> visited;
 
         while (!q.empty()) {
-            TreeNode* node = q.front().first;
-            int steps = q.front().second;
-            q.pop();
-
-            if (steps == k) {
+            TreeNode* node = q.front().first; 
+            int steps = q.front().second; q.pop();
+            if(visited.find(node) != visited.end()) {
+                continue;
+            }
+            visited.insert(node);
+            if(steps == k) {
                 res.push_back(node->val);
-                continue;  // Don't explore further from this node
+                continue;
             }
 
-            for (TreeNode* neighbor : {node->left, node->right, storeParents[node]}) {
-                if (neighbor && visited.find(neighbor) == visited.end()) {
-                    q.push({neighbor, steps + 1});
-                    visited.insert(neighbor);
+            for(auto nei : {node->left, node->right, mp[node]}) {
+                if(nei && visited.find(nei) == visited.end()) {
+                    q.push({nei, steps + 1});
                 }
             }
         }
-
         return res;
     }
 };
