@@ -1,32 +1,47 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution {
 public:
-    bool inorder(TreeNode* root, int k, unordered_set<int>& st) {
-        if(root == NULL) return false;
-
-        bool left = inorder(root->left, k, st);
-
-        if(st.count(k - root->val)) {
-            return true;
-        } 
-        st.insert(root->val);
-
-        bool right = inorder(root->right, k, st);
-
-        return left || right;
+    void pushLeftPath(TreeNode* node, stack<TreeNode*>& st) {
+        while (node) {
+            st.push(node);
+            node = node->left;
+        }
     }
+    void pushRightPath(TreeNode* node, stack<TreeNode*>& st) {
+        while (node) {
+            st.push(node);
+            node = node->right;
+        }
+    }
+
     bool findTarget(TreeNode* root, int k) {
-        unordered_set<int> st;
-        return inorder(root, k, st);
+        if (!root)
+            return false;
+
+        stack<TreeNode*> leftStack, rightStack;
+        pushLeftPath(root, leftStack);   // smallest side
+        pushRightPath(root, rightStack); // largest side
+
+        while (!leftStack.empty() && !rightStack.empty() &&
+               leftStack.top() != rightStack.top()) {
+
+            int leftVal = leftStack.top()->val;
+            int rightVal = rightStack.top()->val;
+            int sum = leftVal + rightVal;
+
+            if (sum == k)
+                return true;
+
+            if (sum < k) {
+                TreeNode* node = leftStack.top()->right;
+                leftStack.pop();
+                pushLeftPath(node, leftStack);
+            } else {
+                TreeNode* node = rightStack.top()->left;
+                rightStack.pop();
+                pushRightPath(node, rightStack);
+            }
+        }
+
+        return false;
     }
 };
