@@ -1,12 +1,7 @@
 class Solution {
 public:
     int maxVowels(string s, int k) {
-        set<char> vowels;
-        vowels.insert('a');
-        vowels.insert('e');
-        vowels.insert('i');
-        vowels.insert('o');
-        vowels.insert('u');
+        unordered_set<char> vowels = {'a','e','i','o','u'};
         int n = s.length();
         int maxVowels = INT_MIN;
         int count = 0;
