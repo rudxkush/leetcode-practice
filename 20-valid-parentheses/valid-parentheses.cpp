@@ -1,26 +1,25 @@
 class Solution {
 public:
-    bool isValidParentheses(char top, char ch) {
-        if ((top == '(' && ch == ')') || (top == '[' && ch == ']') ||
-            (top == '{' && ch == '}'))
-            return true;
-        return false;
+    bool checkValidity(char open, char close) {
+        return (open == '(' && close == ')') ||
+               (open == '{' && close == '}') ||
+               (open == '[' && close == ']');
     }
-    
-    bool isValid(string exp) {
+
+    bool isValid(string s) {
         stack<char> st;
 
-        for (int i = 0; i < exp.length(); i++) {
-            if(exp[i] == '(' || exp[i] == '[' || exp[i] == '{') {
-                st.push(exp[i]);
-            }
-            else if(exp[i] == ')' || exp[i] == ']' || exp[i] == '}') {
-                if (st.empty() || !isValidParentheses(st.top(), exp[i])) 
-                    return false;
-                st.pop(); 
+        for (char bracket : s) {
+            if (bracket == '(' || bracket == '{' || bracket == '[') {
+                st.push(bracket);
+            } else {
+                if (st.empty()) return false; 
+                char top = st.top();
+                st.pop();
+                if (!checkValidity(top, bracket)) return false;
             }
         }
-        
-        return st.empty();  
+
+        return st.empty();
     }
 };
