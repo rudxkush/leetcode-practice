@@ -1,49 +1,23 @@
 class Solution {
 public:
-    vector<int> nearestSmallerElementOnRight(vector<int>& heights, int n) {
-        vector<int> res(n);
-        stack<int> st;
-        for (int i = n - 1; i >= 0; i--) {
-            while (!st.empty() && heights[st.top()] >= heights[i]) {
-                st.pop();
-            }
-            if (!st.empty()) {
-                res[i] = st.top();
-            } else {
-                res[i] = n;
-            }
-            st.push(i);
-        }
-        return res;
-    }
-    vector<int> nearestSmallerElementOnLeft(vector<int>& heights, int n) {
-        vector<int> res(n);
-        stack<int> st;
-        for (int i = 0; i < n; i++) {
-            while (!st.empty() && heights[st.top()] >= heights[i]) {
-                st.pop();
-            }
-            if (!st.empty()) {
-                res[i] = st.top();
-            } else {
-                res[i] = -1;
-            }
-            st.push(i);
-        }
-        return res;
-    }
     int largestRectangleArea(vector<int>& heights) {
         int n = heights.size();
-        vector<int> nsei = nearestSmallerElementOnRight(heights, n);
-        vector<int> psei = nearestSmallerElementOnLeft(heights, n);
-        int maxArea = INT_MIN;
-        for (int i = 0; i < n; i++) {
-            int l = heights[i];
-            int b = nsei[i] - psei[i] - 1;
-            int area = l * b;
-            maxArea = max(maxArea, area);
+        vector<int> st; 
+        st.reserve(n + 1);
+        long long best = 0;
+
+        for (int i = 0; i <= n; ++i) {
+            int h = (i == n) ? 0 : heights[i];          // trailing zero flush
+            while (!st.empty() && heights[st.back()] > h) {
+                int mid = st.back(); st.pop_back();
+                int left = st.empty() ? 0 : st.back() + 1;
+                int right = i - 1;
+                long long area = 1LL * heights[mid] * (right - left + 1);
+                best = max(best, area);
+            }
+            st.push_back(i);
         }
-        return maxArea;
+        return (int)best;
     }
     int maximalRectangle(vector<vector<char>>& matrix) {
         int col = matrix[0].size();
