@@ -9,7 +9,7 @@ public:
         for (int k = 0; k < n; ++k) {
             result = max(result, maxDifference * nums[k]);
             maxDifference = max(maxDifference, maxPrefix - nums[k]);
-            maxPrefix = max(maxPrefix, static_cast<long long>(nums[k]));
+            maxPrefix = max(maxPrefix, (long long) nums[k]);
         }
         return result;
     }
