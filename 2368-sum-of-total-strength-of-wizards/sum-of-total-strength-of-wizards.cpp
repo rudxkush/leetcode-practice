@@ -65,13 +65,13 @@ public:
             long long total_left = modSub(pprefix[i], pprefix[max(0, psee[i])]);
             long long total_right = modSub(pprefix[nse[i]], pprefix[i]);
 
-            long long contrib = (strength[i] % mod) *
-                                (((left_count * total_right % mod -
-                                   right_count * total_left % mod + mod) %
-                                  mod)) %
-                                mod;
+            long long contribution = (strength[i] % mod) *
+                                     (((left_count * total_right % mod -
+                                        right_count * total_left % mod + mod) %
+                                       mod)) %
+                                     mod;
 
-            ans = (ans + contrib) % mod;
+            ans = (ans + contribution) % mod;
         }
         return ans;
     }
