@@ -1,38 +1,34 @@
 class Solution {
 public:
     int maxFrequency(vector<int>& nums, int k, int numOperations) {
-        int upperLimit = *max_element(nums.begin(), nums.end()) + k;
-        map<int, int> freqImpact;
-        unordered_map<int, int> freqSeen;
+        int n = nums.size();
+        int maxElement = 0;
+        for(int it : nums) {
+            maxElement = max(it, maxElement);
+        }
+        map<int, int> diffArray;
+        unordered_map<int, int> freq;
+        for(int i = 0; i < n; i++) {
+            freq[nums[i]]++; // mark frequency of nums's element
 
-        for (int num : nums) {
-            freqSeen[num]++;
+            int start = (nums[i] - k < 0) ? 0 : nums[i] - k;
+            int end = (nums[i] + k > maxElement) ? maxElement : nums[i] + k;
 
-            int leftRange = max(0, num - k);
-            int rightRange = min(upperLimit, num + k);
-
-            freqImpact[leftRange]++;
-            freqImpact[rightRange + 1]--;
-
-            freqImpact[num] += 0;
+            diffArray[start]++; // mark the start
+            diffArray[end + 1]--; // mark the end
+            diffArray[nums[i]] += 0; // high probability for nums's element to be our answer
         }
 
-        int result = 1;
-        int currentSum = 0;
-
-        for (auto it = freqImpact.begin(); it != freqImpact.end(); ++it) {
-            int currentNum = it->first;
-            currentSum += it->second;
-            it->second = currentSum;
-
-            int existingCount = freqSeen[currentNum];
-            int convertibleCount = it->second - existingCount;
-            int maxPossible =
-                existingCount + min(convertibleCount, numOperations);
-
-            result = max(result, maxPossible);
+        int answer = 1;
+        int cummulativeSum = 0;
+        for(auto& [target, diff] : diffArray) {
+            diff += cummulativeSum;
+            int target_frequency_in_nums = freq[target];
+            int operationsRequired = diff - target_frequency_in_nums;
+            int operation_within_threshold = (operationsRequired <= numOperations) ? operationsRequired : numOperations;
+            answer = max(answer, operation_within_threshold + target_frequency_in_nums);
+            cummulativeSum = diff;
         }
-
-        return result;
+        return answer;
     }
 };
