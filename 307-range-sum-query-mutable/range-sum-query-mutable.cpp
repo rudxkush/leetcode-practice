@@ -1,38 +1,33 @@
 class NumArray {
 public:
-    vector<int> prefix;
+    vector<int> arr, fenwick;
+
     NumArray(vector<int>& nums) {
-        int n = (int)nums.size();
-        prefix.clear();
-        prefix.resize(n, 0);
-        prefix[0] = nums[0];
-        for (int i = 1; i < n; i++) {
-            prefix[i] = prefix[i - 1] + nums[i];
-        }
+        int n = nums.size();
+        arr = nums;
+        fenwick.assign(n + 1, 0);
+        for (int i = 0; i < n; i++) add(i, arr[i]);
     }
 
-    void update(int index, int val) {
-        int m = (int) prefix.size();
-        int original = (index == 0) ? prefix[0] : prefix[index] - prefix[index - 1];
-        if (val == original)
-            return;
-        
-        int modify = val - original;
-        
-        for (int j = index; j < m; j++) {
-            prefix[j] += modify;
-        }
+    void add(int idx, int val) {
+        for (int i = idx + 1; i <= arr.size(); i += i & -i)
+            fenwick[i] += val;
     }
 
-    int sumRange(int left, int right) {
-        int inclusiveSum = prefix[right] - ((left == 0) ? 0 : prefix[left - 1]);
-        return inclusiveSum;
+    void update(int idx, int val) {
+        int diff = val - arr[idx];
+        arr[idx] = val;
+        add(idx, diff);
+    }
+
+    int prefixSum(int idx) {
+        int res = 0;
+        for (int i = idx + 1; i > 0; i -= i & -i)
+            res += fenwick[i];
+        return res;
+    }
+
+    int sumRange(int l, int r) {
+        return prefixSum(r) - (l ? prefixSum(l - 1) : 0);
     }
 };
-
-/**
- * Your NumArray object will be instantiated and called as such:
- * NumArray* obj = new NumArray(nums);
- * obj->update(index,val);
- * int param_2 = obj->sumRange(left,right);
- */
