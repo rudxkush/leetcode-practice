@@ -2,6 +2,7 @@ class Solution {
 public:
     vector<int> lexSmallestNegatedPerm(int n, long long target) {
         vector<int> ans;
+        vector<int> positive;
         long long sum = 0;
         for(int i = n; i >= 1; i--) {
             long long remainingSum = (long long) i * (i - 1) / 2;
@@ -10,11 +11,13 @@ public:
                 ans.push_back(-i);
             } else {
                 sum = sum + i;
-                ans.push_back(i);
+                positive.push_back(i);
             }
         }
-        sort(ans.begin(), ans.end());
+        // sort(ans.begin(), ans.end());
         if(sum == target) {
+            reverse(positive.begin(), positive.end());
+            ans.insert(ans.end(), positive.begin(), positive.end());
             return ans;
         }
         return {};
