@@ -11,8 +11,6 @@ public:
                 letterLogs.push_back(log);
             }
         }
-
-        // sort both the logs separately
         // sort(letter logs)
         sort(letterLogs.begin(), letterLogs.end(), 
         [](const string& A, const string& B) {
