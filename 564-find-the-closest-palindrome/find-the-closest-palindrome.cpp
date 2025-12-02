@@ -1,58 +1,46 @@
 class Solution {
 public:
-    // Mirror left half into right half to form palindrome
-    long long makePalindrome(long long val) {
-        string s = to_string(val);
-        int n = s.size();
-        int i = (n - 1) / 2, j = n / 2;
+    long mirrorLeft(long firstHalf, bool isEven) {
+        long resultNum = firstHalf;
 
-        while (i >= 0) {
-            s[j++] = s[i--];
+        if (isEven == false) {
+            firstHalf /= 10;
         }
-        return stoll(s);
+        while (firstHalf > 0) {
+            int digit = firstHalf % 10;
+            resultNum = (resultNum * 10) + digit;
+            firstHalf /= 10;
+        }
+        return resultNum;
     }
+    string nearestPalindromic(string n) {
+        int L = n.length();
+        int mid = L / 2;
+        int firstHalfLength = (L % 2 == 0) ? mid : (mid + 1);
+        long firstHalf = stol(n.substr(0, firstHalfLength));
 
-    // Largest palindrome strictly smaller than num
-    long long getPrev(long long num) {
-        long long lo = 0, hi = num, best = -1;
-        while (lo <= hi) {
-            long long mid = lo + (hi - lo) / 2;
-            long long pal = makePalindrome(mid);
+        vector<long> possibleResults;
 
-            if (pal < num) {
-                best = pal;
-                lo = mid + 1;
-            } else {
-                hi = mid - 1;
+        possibleResults.push_back(mirrorLeft(firstHalf, L % 2 == 0));
+        possibleResults.push_back(mirrorLeft(firstHalf - 1, L % 2 == 0));
+        possibleResults.push_back(mirrorLeft(firstHalf + 1, L % 2 == 0));
+        possibleResults.push_back((long)pow(10, L - 1) - 1);
+        possibleResults.push_back((long)pow(10, L) + 1);
+
+        long diff = LONG_MAX;
+        long result = INT_MAX;
+        long orignalNum = stol(n);
+
+        for (long num : possibleResults) {
+            if (num == orignalNum)
+                continue;
+            if (abs(num - orignalNum) < diff) {
+                diff = abs(num - orignalNum);
+                result = num;
+            } else if (abs(num - orignalNum) == diff) {
+                result = min(result, num);
             }
         }
-        return best;
-    }
-
-    // Smallest palindrome strictly greater than num
-    long long getNext(long long num) {
-        long long lo = num, hi = (long long)1e18, best = -1;
-        while (lo <= hi) {
-            long long mid = lo + (hi - lo) / 2;
-            long long pal = makePalindrome(mid);
-
-            if (pal > num) {
-                best = pal;
-                hi = mid - 1;
-            } else {
-                lo = mid + 1;
-            }
-        }
-        return best;
-    }
-
-    string nearestPalindromic(string s) {
-        long long num = stoll(s);
-        long long prevPal = getPrev(num);
-        long long nextPal = getNext(num);
-
-        if (abs(prevPal - num) <= abs(nextPal - num))
-            return to_string(prevPal);
-        return to_string(nextPal);
+        return to_string(result);
     }
 };
