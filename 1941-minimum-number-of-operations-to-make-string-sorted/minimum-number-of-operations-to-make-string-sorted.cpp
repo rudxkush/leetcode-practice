@@ -10,42 +10,46 @@ public:
         }
         return res;
     }
-    int modInverse(int num, int M) { 
-        return power(num, M - 2); 
+    int modInverse(long long deno, long long mod) {
+        return power(deno, mod - 2);
     }
     int makeStringSorted(string s) {
-        int n = s.length();
         long long rank = 0;
-        int freq[26] = {0};
-
-        vector<long long> fact(n + 1);
+        int n = (int)s.length();
+        // pre compute frequeny of all chars in the string s
+        vector<int> freq(26, 0);
+        for (auto ch : s) {
+            freq[ch - 'a']++;
+        }
+        // pre compute the factorial of all the possible permutations
+        vector<long long> fact(n + 1, 1);
         fact[0] = 1;
-        for (int i = 1; i <= n; i++) {
-            fact[i] = (fact[i - 1] * i) % mod;
+        for(int i = 1; i <= n; i++) {
+            fact[i] =  (fact[i - 1] * i) % mod;
         }
-
-        for (char c : s) {
-            freq[c - 'a']++;
-        }
-
-        for (int i = 0; i < n; i++) {
-            long long smaller_count = 0;
-            for (int j = 0; j < s[i] - 'a'; j++) {
-                smaller_count += freq[j];
+        for(int i = 0; i < n; i++) {
+            // how much the permuation count with the unique given   
+            // smaller letters will contribute
+            int smallerCount = 0;
+            for(int j = 0; j < s[i] - 'a'; j++) {
+                smallerCount += freq[j];
             }
-
+            // sum all the frequencies of the duplicates
+            // denominator: permutation count with duplicates
             long long denominator = 1;
-            for (int k = 0; k < 26; k++) {
-                denominator = (denominator * fact[freq[k]]) % mod;
+            for(int i = 0; i < 26; i++) {
+                denominator = (denominator * fact[freq[i]]) % mod;
             }
 
-            long long permutation_count =
-                (fact[n - 1 - i] * modInverse(denominator, mod)) % mod;
+            // permution count with the given unique letters
+            long long permutationCount = (fact[n - i - 1] * modInverse(denominator, mod)) % mod;
 
-            rank = (rank + smaller_count * permutation_count) % mod;
+            // how those spaces/permutation count would be utilised by the chars that are smaller to this letter
+            // the spaces would also that many which would make up for the entire length
+            rank = (rank + smallerCount * permutationCount) % mod;
 
             freq[s[i] - 'a']--;
         }
-        return (int) rank;
+        return (int) rank; // zero based value that is rank starts from 0
     }
 };
