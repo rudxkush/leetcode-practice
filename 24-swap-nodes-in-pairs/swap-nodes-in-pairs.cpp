@@ -11,20 +11,22 @@
 class Solution {
 public:
     ListNode* swapPairs(ListNode* head) {
-        if (!head)
-            return head;
-        ListNode *first = head, *temp = 0, *prev = 0;
-        head = head->next ? head->next : head;
-        ListNode* second = 0;
-        while (first && first->next) {
-            second = first->next;
-            first->next = second->next;
+        if(head == NULL) return head;
+        ListNode* dummy = new ListNode(0); 
+        dummy->next = head;
+        ListNode* iter = dummy;
+        while(iter->next && iter->next->next) {
+            // we can swap the two nodes provided both the
+            // adjacent nodes are not NULL
+            ListNode* prev = iter;
+            ListNode* nextNodes = iter->next->next->next;
+            ListNode* first = iter->next;
+            ListNode* second = iter->next->next;
+            first->next = nextNodes;
             second->next = first;
-            if (prev)
-                prev->next = second;
-            prev = first;
-            first = first->next;
+            prev->next = second;
+            iter = first;
         }
-        return head;
+        return dummy->next;
     }
 };
